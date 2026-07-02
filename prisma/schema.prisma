@@ -11,4 +11,82 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Rating {
+  id                String            @id @default(uuid())
+  code              String            @unique
+  label             String
+  short_description String
+  badge_image_url   String
+  color             String
+  highlights        RatingHighlight[]
+  games             Game[]
+  created_at        DateTime          @default(now())
+  updated_at        DateTime          @updatedAt
+}
+
+model RatingHighlight {
+  id          String  @id @default(uuid())
+  rating_id   String
+  rating      Rating  @relation(fields: [rating_id], references: [id])
+  icon        String  // string token: "shield-check", "file-text", "users"
+  title       String
+  description String
+  order       Int
+}
+
+model Game {
+  id                   String              @id @default(uuid())
+  slug                 String              @unique
+  name                 String
+  cover_image_url      String
+  background_image_url String
+  description          String
+  trailer_url          String
+  trailer_duration     String
+  platform             String[]
+  release_year         Int
+  developer            String
+  size                 String
+  game_modes           String[]
+  is_popular           Boolean             @default(false)
+  rating_id            String
+  rating               Rating              @relation(fields: [rating_id], references: [id])
+  genres               GameGenre[]
+  content_descriptors  ContentDescriptor[]
+  created_at           DateTime            @default(now())
+  updated_at           DateTime            @updatedAt
+}
+
+model GameGenre {
+  id      String @id @default(uuid())
+  game_id String
+  game    Game   @relation(fields: [game_id], references: [id])
+  name    String // "Souls Like"
+  slug    String // "souls-like" — di-generate dari name saat insert
+}
+
+model ContentDescriptor {
+  id          String @id @default(uuid())
+  game_id     String
+  game        Game   @relation(fields: [game_id], references: [id])
+  name        String
+  icon        String // string token: "warning-triangle", "skull", "message-circle"
+  description String
+}
+
+model News {
+  id                String   @id @default(uuid())
+  slug              String   @unique
+  title             String
+  excerpt           String
+  content           String
+  thumbnail_url     String
+  thumbnail_caption String?
+  type              String   // "Pengumuman" | "Artikel"
+  published_at      DateTime
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
 }
