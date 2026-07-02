@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { QueryGamesDto } from './dto/query-games.dto';
@@ -6,36 +6,63 @@ import { SearchGamesDto } from './dto/search-games.dto';
 
 @Injectable()
 export class GamesService {
+  private readonly logger = new Logger(GamesService.name);
+
   constructor(private prisma: PrismaService) {}
 
   async getPopularSearch() {
-    return this.prisma.game.findMany({
+    this.logger.log('Fetching popular games...');
+    const start = Date.now();
+
+    const result = await this.prisma.game.findMany({
       where: { is_popular: true },
       select: { id: true, name: true, slug: true },
       orderBy: { name: 'asc' },
     });
+
+    this.logger.log(`Popular games fetched in ${Date.now() - start}ms`);
+    return result;
   }
 
   async search(dto: SearchGamesDto) {
-    if (!dto.q) return [];
-    return this.prisma.game.findMany({
+    this.logger.log(`Searching games with query: ${dto.q}`);
+    const start = Date.now();
+
+    if (!dto.q) {
+      this.logger.log(`Search games finished in ${Date.now() - start}ms`);
+      return [];
+    }
+
+    const result = await this.prisma.game.findMany({
       where: {
         name: { contains: dto.q, mode: 'insensitive' },
       },
       select: { name: true, slug: true, cover_image_url: true },
       take: 8,
     });
+
+    this.logger.log(`Search games finished in ${Date.now() - start}ms`);
+    return result;
   }
 
   async getGenres() {
-    return this.prisma.gameGenre.findMany({
+    this.logger.log('Fetching genres...');
+    const start = Date.now();
+
+    const result = await this.prisma.gameGenre.findMany({
       distinct: ['name'],
       select: { name: true, slug: true },
       orderBy: { name: 'asc' },
     });
+
+    this.logger.log(`Genres fetched in ${Date.now() - start}ms`);
+    return result;
   }
 
   async findAll(dto: QueryGamesDto) {
+    this.logger.log('Fetching all games with filters...');
+    const start = Date.now();
+
     const page = parseInt(dto.page || '1', 10);
     const limit = parseInt(dto.limit || '12', 10);
     const skip = (page - 1) * limit;
@@ -86,7 +113,7 @@ export class GamesService {
       genres: game.genres.map((g) => g.name),
     }));
 
-    return {
+    const result = {
       data: formattedData,
       meta: {
         total,
@@ -95,9 +122,15 @@ export class GamesService {
         total_pages: Math.ceil(total / limit) || 1,
       },
     };
+
+    this.logger.log(`All games fetched in ${Date.now() - start}ms`);
+    return result;
   }
 
   async findOne(slug: string) {
+    this.logger.log(`Fetching game with slug: ${slug}...`);
+    const start = Date.now();
+
     const game = await this.prisma.game.findUnique({
       where: { slug },
       select: {
@@ -127,12 +160,16 @@ export class GamesService {
     });
 
     if (!game) {
+      this.logger.warn(`Game with slug "${slug}" not found`);
       throw new NotFoundException(`Game "${slug}" tidak ditemukan`);
     }
 
-    return {
+    const result = {
       ...game,
       genres: game.genres.map((g) => g.name),
     };
+
+    this.logger.log(`Game with slug ${slug} fetched in ${Date.now() - start}ms`);
+    return result;
   }
 }

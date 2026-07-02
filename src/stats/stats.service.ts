@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class StatsService {
+  private readonly logger = new Logger(StatsService.name);
+
   constructor(private prisma: PrismaService) {}
 
   async getDashboard(): Promise<{
@@ -11,6 +13,9 @@ export class StatsService {
     genres_total: number;
     rating_distribution: Record<string, number>;
   }> {
+    this.logger.log('Fetching dashboard stats...');
+    const start = Date.now();
+
     const [gamesTotal, publishers, genres, ratingDistribution, ratings] =
       await Promise.all([
         this.prisma.game.count(),
@@ -43,11 +48,14 @@ export class StatsService {
       }
     }
 
-    return {
+    const result = {
       games_total: gamesTotal,
       publishers_total: publishers.length,
       genres_total: genres.length,
       rating_distribution: distribution,
     };
+
+    this.logger.log(`Dashboard stats fetched in ${Date.now() - start}ms`);
+    return result;
   }
 }
