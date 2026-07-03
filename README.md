@@ -1,98 +1,142 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# IGRS Backend API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+> Indonesia Game Rating System  
+> Version: 1.3.0  
+> Tech Stack: NestJS + Prisma 5 + PostgreSQL (Supabase)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+API backend public *read-only* untuk platform IGRS (Indonesia Game Rating System).
 
-## Description
+## 🚀 Prerequisites
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Sebelum memulai, pastikan Anda telah menginstal:
+- [Node.js](https://nodejs.org/) (versi LTS direkomendasikan)
+- [npm](https://www.npmjs.com/) atau yarn/pnpm
+- Akses ke PostgreSQL database (project ini menggunakan Supabase)
 
-## Project setup
+## 🛠️ Installation & Setup
 
-```bash
-$ npm install
+Ikuti langkah-langkah berikut untuk menjalankan aplikasi secara lokal:
+
+1. **Clone repository** (jika belum):
+   ```bash
+   git clone <url-repo-anda>
+   cd igrs-backend
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Setup Environment Variables**:
+   Buat file `.env` di root direktori dengan menyalin dari `.env.example`:
+   ```bash
+   cp .env.example .env
+   ```
+   Sesuaikan value di dalam file `.env` dengan kredensial database Anda.
+
+4. **Generate Prisma Client**:
+   ```bash
+   npx prisma generate
+   ```
+
+5. **(Opsional) Seed Database**:
+   Untuk mengisi database dengan data dummy awal (ratings, games, news), jalankan:
+   ```bash
+   npm run seed
+   ```
+
+6. **Jalankan Aplikasi**:
+   ```bash
+   # Development mode
+   npm run start:dev
+   
+   # Production mode
+   npm run build
+   npm run start:prod
+   ```
+
+## ⚙️ Environment Variables
+
+File `.env` membutuhkan variabel berikut:
+
+| Variabel | Deskripsi | Contoh |
+|----------|-----------|--------|
+| `DATABASE_URL` | Connection string utama PostgreSQL (Supabase) | `postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres` |
+| `DIRECT_URL` | Connection string langsung (untuk Prisma) | `postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres` |
+| `PORT` | Port aplikasi berjalan | `3000` (default jika kosong) |
+
+### 🗄️ Database Flexibility (PostgreSQL & MySQL)
+Project ini menggunakan **Prisma ORM** yang mendukung berbagai relational database. Secara bawaan, project ini menggunakan PostgreSQL. 
+
+**Jika Anda ingin menggunakan PostgreSQL Lokal:**
+Anda tidak perlu mengubah kode apapun. Cukup sesuaikan `.env` Anda dengan koneksi lokal:
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/igrs_db"
+# DIRECT_URL bisa dihapus atau disamakan dengan DATABASE_URL
 ```
 
-## Compile and run the project
+**Jika Anda ingin menggunakan MySQL:**
+1. Buka file `prisma/schema.prisma`
+2. Ubah `provider` dari `"postgresql"` menjadi `"mysql"`:
+   ```prisma
+   datasource db {
+     provider = "mysql"
+     url      = env("DATABASE_URL")
+   }
+   ```
+3. Ubah `DATABASE_URL` di `.env` menjadi koneksi MySQL:
+   ```env
+   DATABASE_URL="mysql://root:password@localhost:3306/igrs_db"
+   ```
+4. Jalankan `npx prisma db push` untuk mensinkronisasi skema ke database.
 
-```bash
-# development
-$ npm run start
+## 📦 Available Scripts
 
-# watch mode
-$ npm run start:dev
+Berikut adalah beberapa perintah npm utama yang tersedia:
 
-# production mode
-$ npm run start:prod
+| Perintah | Deskripsi |
+|----------|-----------|
+| `npm run start` | Menjalankan aplikasi secara normal |
+| `npm run start:dev` | Menjalankan aplikasi dalam watch mode (auto-reload) |
+| `npm run build` | Meng-compile aplikasi ke folder `dist/` |
+| `npm run seed` | Menjalankan script seeding database Prisma |
+| `npm run lint` | Menjalankan ESLint |
+| `npm run format`| Menjalankan Prettier |
+
+## 📡 API Endpoints
+
+Semua endpoint bersifat public dan berjalan dengan awalan prefix `/api`.
+
+| Module | Method | Endpoint | Deskripsi | Query Params (Opsional) |
+|--------|--------|----------|-------------|-------------------------|
+| **Stats** | `GET` | `/api/stats/dashboard` | Statistik total game, publisher, dll | - |
+| **Ratings**| `GET` | `/api/ratings` | List semua kategori umur & highlights | - |
+| **Games** | `GET` | `/api/games/popular-search`| List pencarian game populer | - |
+| | `GET` | `/api/games/search` | Autocomplete search bar | `q` (required) |
+| | `GET` | `/api/games/genres` | List genre unik yang tersedia | - |
+| | `GET` | `/api/games` | List semua game lengkap dengan filter | `q`, `platform`, `rating`, `genre`, `mode`, `sort`, `page`, `limit` |
+| | `GET` | `/api/games/:slug` | Detail game berdasarkan slug | - |
+| **News** | `GET` | `/api/news` | List berita dengan paginasi | `limit`, `page`, `type`, `exclude` |
+| | `GET` | `/api/news/:slug` | Detail berita berdasarkan slug | - |
+
+## 📖 Swagger Documentation
+
+Aplikasi ini dilengkapi dengan Swagger UI untuk kemudahan testing dan eksplorasi API.
+Setelah aplikasi berjalan, buka browser dan akses:
+
+👉 **`http://localhost:3000/docs`** *(sesuaikan port jika Anda mengubahnya)*
+
+## 📁 Project Structure (src/)
+
 ```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+src/
+├── common/             # Utility global, interceptors (misal: LoggingInterceptor)
+├── games/              # Module terkait Data Game (Controller, Service, DTO)
+├── news/               # Module terkait Berita (Controller, Service, DTO)
+├── prisma/             # Module global untuk PrismaService
+├── ratings/            # Module terkait Kategori Rating (Controller, Service)
+├── stats/              # Module terkait Statistik Dashboard
+├── app.module.ts       # Root module aplikasi NestJS
+└── main.ts             # Entry point aplikasi (konfigurasi pipe, prefix, swagger)
 ```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
