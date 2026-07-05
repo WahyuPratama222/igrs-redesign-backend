@@ -23,7 +23,7 @@ export async function seedGames(prisma: PrismaClient) {
       release_year: 2011,
       developer: 'Mojang Studios',
       size: '1 GB',
-      game_modes: ['Single Player', 'Multiplayer', 'Online'],
+      game_modes: ['Singleplayer', 'Multiplayer', 'Online'],
       is_popular: true,
       rating_code: '3+',
       genres: [
@@ -48,7 +48,7 @@ export async function seedGames(prisma: PrismaClient) {
       release_year: 2022,
       developer: 'From Software',
       size: '44.5 GB',
-      game_modes: ['Single Player', 'Multiplayer', 'Online'],
+      game_modes: ['Singleplayer', 'Multiplayer', 'Online'],
       is_popular: true,
       rating_code: '18+',
       genres: [
@@ -74,7 +74,7 @@ export async function seedGames(prisma: PrismaClient) {
       release_year: 2020,
       developer: 'HoYoverse',
       size: '30 GB',
-      game_modes: ['Single Player', 'Multiplayer', 'Online'],
+      game_modes: ['Singleplayer', 'Multiplayer', 'Online'],
       is_popular: true,
       rating_code: '13+',
       genres: [
@@ -100,7 +100,7 @@ export async function seedGames(prisma: PrismaClient) {
       release_year: 2023,
       developer: 'HoYoverse',
       size: '15 GB',
-      game_modes: ['Single Player', 'Online'],
+      game_modes: ['Singleplayer', 'Online'],
       is_popular: true,
       rating_code: '13+',
       genres: [
@@ -176,7 +176,7 @@ export async function seedGames(prisma: PrismaClient) {
       release_year: 2006,
       developer: 'Roblox Corporation',
       size: '500 MB',
-      game_modes: ['Single Player', 'Multiplayer', 'Online'],
+      game_modes: ['Singleplayer', 'Multiplayer', 'Online'],
       is_popular: true,
       rating_code: '7+',
       genres: [
@@ -192,7 +192,7 @@ export async function seedGames(prisma: PrismaClient) {
     {
       slug: 'pokemon-tcg-pocket',
       name: 'Pokemon TCG Pocket',
-      cover_image_url: 'https://tbaytbnfqglcnjmireuj.supabase.co/storage/v1/object/public/covers/roblox-cover.jpeg',
+      cover_image_url: 'https://tbaytbnfqglcnjmireuj.supabase.co/storage/v1/object/public/covers/pokemon-tcg-card-cover.jpeg',
       background_image_url: 'https://tbaytbnfqglcnjmireuj.supabase.co/storage/v1/object/public/backgrounds/pokemon-tcg-card-background.jpeg',
       description: 'Pokemon TCG Pocket adalah game kartu digital Pokemon yang memungkinkan pemain mengumpulkan dan bertarung menggunakan kartu Pokemon favorit mereka.',
       trailer_url: 'https://youtu.be/RGQsfOxyL9E?si=nlASQg5Has8tT-pR',
@@ -201,7 +201,7 @@ export async function seedGames(prisma: PrismaClient) {
       release_year: 2024,
       developer: 'The Pokemon Company',
       size: '800 MB',
-      game_modes: ['Single Player', 'Multiplayer', 'Online'],
+      game_modes: ['Singleplayer', 'Multiplayer', 'Online'],
       is_popular: false,
       rating_code: '7+',
       genres: [
