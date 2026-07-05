@@ -102,6 +102,7 @@ export class GamesService {
           developer: true,
           release_year: true,
           platform: true,
+          game_modes: true,
           rating: {
             select: { code: true, badge_image_url: true, color: true },
           },
