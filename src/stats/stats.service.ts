@@ -36,23 +36,33 @@ export class StatsService {
         }),
       ]);
 
-    // Map rating distribution by rating code instead of id
     const ratingCodeMap = new Map<string, string>();
     ratings.forEach((r) => ratingCodeMap.set(r.id, r.code));
 
     const distribution: Record<string, number> = {};
+
+    ratings.forEach((r) => {
+      distribution[r.code] = 0;
+    });
+
     for (const item of ratingDistribution) {
       const code = ratingCodeMap.get(item.rating_id);
       if (code) {
         distribution[code] = item._count.id;
       }
-    }
+    } 
+
+   const ORDER = ['SU', '3+', '7+', '13+', '18+'];
+    const sortedDistribution: Record<string, number> = {};
+    ORDER.forEach((code) => {
+      sortedDistribution[code] = distribution[code] ?? 0;
+    });
 
     const result = {
       games_total: gamesTotal,
       publishers_total: publishers.length,
       genres_total: genres.length,
-      rating_distribution: distribution,
+      rating_distribution: sortedDistribution,
     };
 
     this.logger.log(`Dashboard stats fetched in ${Date.now() - start}ms`);
