@@ -193,7 +193,7 @@ export async function seedGames(prisma: PrismaClient) {
       slug: 'pokemon-tcg-pocket',
       name: 'Pokemon TCG Pocket',
       cover_image_url: 'https://tbaytbnfqglcnjmireuj.supabase.co/storage/v1/object/public/covers/roblox-cover.jpeg',
-      background_image_url: 'https://tbaytbnfqglcnjmireuj.supabase.co/storage/v1/object/public/backgrounds/roblox-background.jpeg',
+      background_image_url: 'https://tbaytbnfqglcnjmireuj.supabase.co/storage/v1/object/public/backgrounds/pokemon-tcg-card-background.jpeg',
       description: 'Pokemon TCG Pocket adalah game kartu digital Pokemon yang memungkinkan pemain mengumpulkan dan bertarung menggunakan kartu Pokemon favorit mereka.',
       trailer_url: 'https://youtu.be/RGQsfOxyL9E?si=nlASQg5Has8tT-pR',
       trailer_duration: '01:45',

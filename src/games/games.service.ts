@@ -28,18 +28,24 @@ export class GamesService {
     this.logger.log(`Searching games with query: ${dto.q}`);
     const start = Date.now();
 
-    if (!dto.q) {
-      this.logger.log(`Search games finished in ${Date.now() - start}ms`);
+    if (!dto.q || dto.q.trim().length < 3) {
+      this.logger.log(`Search games finished (query too short) in ${Date.now() - start}ms`);
       return [];
     }
 
+    const cleanQuery = dto.q.trim();
+
     const result = await this.prisma.game.findMany({
       where: {
-        name: { contains: dto.q, mode: 'insensitive' },
+        name: { 
+          startsWith: cleanQuery, 
+          mode: 'insensitive' 
+        },
       },
-      select: { name: true, slug: true, cover_image_url: true },
-      take: 8,
-    });
+        select: { name: true, slug: true, cover_image_url: true },
+        orderBy: { name: 'asc' },
+        take: 8,
+      });
 
     this.logger.log(`Search games finished in ${Date.now() - start}ms`);
     return result;
@@ -69,12 +75,14 @@ export class GamesService {
 
     const modes = dto.mode ? (Array.isArray(dto.mode) ? dto.mode : [dto.mode]) : undefined;
 
+    const cleanQuery = dto.q ? dto.q.trim() : undefined;
+    const isQueryValid = cleanQuery && cleanQuery.length >= 3;
+
     const where: Prisma.GameWhereInput = {
-      ...(dto.q && {
+      ...(isQueryValid && {
         OR: [
-          { name: { contains: dto.q, mode: 'insensitive' } },
-          { developer: { contains: dto.q, mode: 'insensitive' } },
-          { genres: { some: { name: { contains: dto.q, mode: 'insensitive' } } } },
+          { name: { contains: cleanQuery, mode: 'insensitive' } },
+          { developer: { contains: cleanQuery, mode: 'insensitive' } },
         ],
       }),
       ...(dto.platform && { platform: { has: dto.platform } }),
