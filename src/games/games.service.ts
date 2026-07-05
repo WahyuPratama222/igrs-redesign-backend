@@ -78,13 +78,6 @@ export class GamesService {
     const cleanQuery = dto.q ? dto.q.trim() : undefined;
     const isQueryValid = cleanQuery && cleanQuery.length >= 3;
 
-    if (cleanQuery && !isQueryValid) {
-      return {
-        data: [],
-        meta: { total: 0, page: 1, limit, total_pages: 1 }
-      };
-    }
-
     const where: Prisma.GameWhereInput = {
       ...(isQueryValid && {
         OR: [
