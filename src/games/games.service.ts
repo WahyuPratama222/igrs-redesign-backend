@@ -75,8 +75,8 @@ export class GamesService {
 
     const modes = dto.mode ? (Array.isArray(dto.mode) ? dto.mode : [dto.mode]) : undefined;
 
-    const cleanQuery = dto.q ? dto.q.trim() : undefined;
-    const isQueryValid = cleanQuery && cleanQuery.length >= 3;
+    const cleanQuery = dto.q ? dto.q.trim() : undefined;  
+    const isQueryValid = cleanQuery !== undefined && cleanQuery.length > 0;
 
     const where: Prisma.GameWhereInput = {
       ...(isQueryValid && {
