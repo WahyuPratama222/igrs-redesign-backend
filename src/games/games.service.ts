@@ -78,6 +78,13 @@ export class GamesService {
     const cleanQuery = dto.q ? dto.q.trim() : undefined;
     const isQueryValid = cleanQuery && cleanQuery.length >= 3;
 
+    if (cleanQuery && !isQueryValid) {
+      return {
+        data: [],
+        meta: { total: 0, page: 1, limit, total_pages: 1 }
+      };
+    }
+
     const where: Prisma.GameWhereInput = {
       ...(isQueryValid && {
         OR: [
@@ -119,7 +126,16 @@ export class GamesService {
     const formattedData = data.map((game) => ({
       ...game,
       genres: game.genres.map((g) => g.name),
-    }));
+    }))
+      .sort((a, b) => {
+      const query = cleanQuery?.toLowerCase() || '';
+      const aMatch = a.name.toLowerCase().startsWith(query);
+      const bMatch = b.name.toLowerCase().startsWith(query);
+      
+      if (aMatch && !bMatch) return -1;
+      if (!aMatch && bMatch) return 1;
+      return a.name.localeCompare(b.name);
+    });
 
     const result = {
       data: formattedData,
